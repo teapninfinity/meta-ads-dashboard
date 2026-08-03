@@ -8,17 +8,13 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json());
-
-// Serve static files from frontend
 app.use(express.static(path.join(__dirname, './frontend')));
 
-// Debug logging
 app.use((req, res, next) => {
   console.log(`📍 ${req.method} ${req.path}`);
   next();
 });
 
-// Sample data
 const sampleData = {
   units: ['UNIT A', 'UNIT B', 'UNIT C'],
   pages: ['เพจ 1', 'เพจ 2', 'เพจ 3'],
@@ -106,10 +102,8 @@ const sampleData = {
   ]
 };
 
-// API endpoint: Get dashboard data
 app.get('/api/dashboard', (req, res) => {
-  const { startDate, endDate, unit, page } = req.query;
-
+  const { unit, page } = req.query;
   let filtered = sampleData.rows;
 
   if (unit && unit !== 'ALL') {
@@ -127,10 +121,8 @@ app.get('/api/dashboard', (req, res) => {
   });
 });
 
-// API endpoint: Refresh data
 app.post('/api/refresh', (req, res) => {
   const updatedAt = new Date().toLocaleString('th-TH');
-
   res.json({
     success: true,
     message: 'อัปเดตข้อมูลสำเร็จ',
@@ -139,19 +131,16 @@ app.post('/api/refresh', (req, res) => {
   });
 });
 
-// Health check
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Catch-all: serve index.html
 app.get('*', (req, res) => {
   const indexPath = path.join(__dirname, './frontend/index.html');
-  console.log(`📄 Serving index.html from: ${indexPath}`);
   res.sendFile(indexPath, (err) => {
     if (err) {
-      console.error(`❌ Error sending file: ${err.message}`);
-      res.status(500).send('Error: index.html not found');
+      console.error(`❌ Error: ${err.message}`);
+      res.status(500).send('Error loading dashboard');
     }
   });
 });
@@ -159,8 +148,4 @@ app.get('*', (req, res) => {
 app.listen(PORT, () => {
   console.log(`\n🚀 Server running at http://localhost:${PORT}`);
   console.log(`📊 Dashboard: http://localhost:${PORT}\n`);
-});
-
-process.on('uncaughtException', (err) => {
-  console.error('❌ Uncaught Exception:', err);
 });

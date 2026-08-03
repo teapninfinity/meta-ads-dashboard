@@ -2,151 +2,106 @@
 <html lang="th">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>META ADS REPORT</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Meta Ads Dashboard</title>
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <div class="container">
+  <div id="dashboardPage" class="dashboard-container">
     <div class="header">
-      <div class="header-content">
-        <h1>META ADS REPORT</h1>
-        <p>สรุปรอบประชุม 1–15 และ 1–สิ้นเดือน แยก UNIT เพจ ตัวรี และตัวสเกล</p>
-      </div>
-      <button id="settingsBtn" class="header-btn" onclick="toggleSettings()">⚙️ ตั้งค่า</button>
+      <h1>📊 Meta Ads Dashboard</h1>
+      <button id="settingsBtn" class="btn-settings">⚙️ ตั้งค่า</button>
     </div>
 
-    <div class="quick-dates">
-      <button id="roundFirst" class="quick-date-btn" onclick="setReportRound('firstHalf', this)">รอบ 1–15</button>
-      <button id="roundSecond" class="quick-date-btn" onclick="setReportRound('fullMonth', this)">รอบ 1–สิ้นเดือน</button>
+    <div class="filters-section">
+      <div class="filter-group">
+        <label>UNIT:</label>
+        <select id="unitFilter">
+          <option value="ALL">ทั้งหมด</option>
+          <option value="UNIT A">UNIT A</option>
+          <option value="UNIT B">UNIT B</option>
+          <option value="UNIT C">UNIT C</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>เพจ:</label>
+        <select id="pageFilter">
+          <option value="ALL">ทั้งหมด</option>
+          <option value="เพจ 1">เพจ 1</option>
+          <option value="เพจ 2">เพจ 2</option>
+          <option value="เพจ 3">เพจ 3</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>ประเภท:</label>
+        <select id="typeFilter">
+          <option value="ALL">ทั้งหมด</option>
+          <option value="SCALE">ตัวสเกล</option>
+          <option value="RE">ตัวรี</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label>มีเดีย:</label>
+        <select id="mediaFilter">
+          <option value="GROUPED">รวมภาพสื่อซ้ำ</option>
+          <option value="SEPARATE">แยกรายแอด</option>
+        </select>
+      </div>
+
+      <button id="refreshBtn" class="btn-refresh">🔄 รีเฟรช</button>
     </div>
 
-    <div class="filters">
-      <div class="filter-box">
-        <label>เดือนรายงาน</label>
-        <input type="month" id="reportMonth" onchange="applyCurrentRound(false)">
-      </div>
-      <div class="filter-box"><label>วันที่เริ่มต้น</label><input type="date" id="startDate" readonly></div>
-      <div class="filter-box"><label>วันที่สิ้นสุด</label><input type="date" id="endDate" readonly></div>
-      <div class="filter-box">
-        <label>UNIT</label>
-        <select id="unit" onchange="onUnitChange()"><option value="ALL">ทั้งหมด</option></select>
-      </div>
-      <div class="filter-box">
-        <label>เพจ</label>
-        <select id="page" onchange="renderFilteredDashboard()"><option value="ALL">ทุกเพจ</option></select>
-      </div>
-      <div class="filter-box"><label>&nbsp;</label><button id="refreshButton" onclick="refreshData()" style="background:#16a34a;">ดึงรายงานรอบนี้</button></div>
-    </div>
-
-    <div class="type-tabs">
-      <button id="typeAll" class="type-tab active-all" onclick="setTypeFilter('ALL')">ทั้งหมด</button>
-      <button id="typeScale" class="type-tab" onclick="setTypeFilter('SCALE')">🚀 ตัวสเกล</button>
-      <button id="typeRe" class="type-tab" onclick="setTypeFilter('RE')">🔄 ตัวรีทั้งหมด</button>
-    </div>
-    <div id="filterStatus" class="filter-status">กำลังแสดง: ทั้งหมด</div>
-
-    <div class="media-view-tabs">
-      <button id="mediaGrouped" class="media-view-btn active" onclick="setMediaView('GROUPED')">รวมภาพสื่อซ้ำ</button>
-      <button id="mediaSeparate" class="media-view-btn" onclick="setMediaView('SEPARATE')">แยกรายแอด</button>
-    </div>
-
-    <div id="content"><div class="loading">กำลังโหลดข้อมูล...</div></div>
-  </div>
-
-  <!-- Settings Page -->
-  <div id="settingsPage" class="settings-page">
-    <div class="settings-page-content">
-      <button onclick="closeSettingsPage()" class="back-btn">← ย้อนกลับ</button>
-      <h1>⚙️ ตั้งค่า Meta Ads API</h1>
-
-      <div class="settings-section">
-        <h2>Meta API Credentials</h2>
-        <div class="settings-group">
-          <label>Meta Access Token 🔐</label>
-          <input type="password" id="metaTokenPage" placeholder="EAABa..." />
-          <button onclick="toggleTokenVisibilityPage()" class="toggle-visibility">👁️ แสดง</button>
-          <small>ได้จาก: Facebook Business Manager → Settings → Apps and Websites</small>
-        </div>
-
-        <div class="settings-group">
-          <label>Ad Account ID</label>
-          <input type="text" id="adAccountIdPage" placeholder="act_123456789" />
-          <small>ตัวอย่าง: act_1234567890123</small>
-        </div>
-      </div>
-
-      <div class="settings-section">
-        <h2>การตั้งค่าข้อมูล</h2>
-        <div class="settings-group">
-          <label>Lock UNIT (เลือก UNIT ที่ต้องการล็อค)</label>
-          <select id="lockedUnitPage">
-            <option value="">ไม่ล็อค - แสดงทั้งหมด</option>
-          </select>
-          <small>หากเลือก UNIT จะแสดงเฉพาะ UNIT นี้เท่านั้น</small>
-        </div>
-
-        <div class="settings-group">
-          <label>ชื่อเพจ (Page Names)</label>
-          <textarea id="pageNamesPage" placeholder="ระบุชื่อเพจแต่ละเพจเว้นด้วยบรรทัดใหม่&#10;เช่น:&#10;เพจ 1&#10;เพจ 2&#10;เพจ 3"></textarea>
-          <small>เว้นด้วยบรรทัดใหม่ (Enter)</small>
-        </div>
-      </div>
-
-      <div class="settings-footer">
-        <button onclick="saveSettingsPage()" class="btn-save">💾 บันทึกการตั้งค่า</button>
-        <button onclick="closeSettingsPage()" class="btn-cancel">ยกเลิก</button>
-      </div>
-
-      <div id="settingsPageMessage" class="settings-message"></div>
+    <div id="dashboardContent" class="dashboard-content">
+      <div class="loading">กำลังโหลด...</div>
     </div>
   </div>
 
-  <div id="imageModal" class="modal" onclick="closeImageModal(event)">
-    <div class="modal-content">
-      <button class="modal-close" title="ปิดภาพ" onclick="closeImageModal(event, true)">×</button>
-      <img id="modalImage" class="modal-image" alt="ภาพสื่อโฆษณา">
-    </div>
-  </div>
-
-  <div id="settingsModal" class="modal" onclick="if(event.target.id==='settingsModal') closeSettings(event)">
-    <div class="settings-content">
+  <div id="settingsPage" class="settings-page hidden">
+    <div class="settings-container">
       <div class="settings-header">
-        <h2>⚙️ ตั้งค่า Meta Ads API</h2>
-        <button class="modal-close" title="ปิด" onclick="closeSettings(event, true)">×</button>
+        <h2>⚙️ ตั้งค่า</h2>
+        <button id="closeSettingsBtn" class="btn-close">✕</button>
       </div>
-      <div class="settings-body">
+
+      <div class="settings-content">
         <div class="settings-group">
-          <label>Meta Access Token</label>
-          <input type="password" id="metaToken" placeholder="EAABa...">
-          <button onclick="toggleTokenVisibility()" class="toggle-visibility">👁️ แสดง</button>
+          <label>Meta Access Token:</label>
+          <input type="password" id="metaToken" placeholder="ป้อน Access Token">
+          <small>🔒 บันทึกใน LocalStorage</small>
         </div>
 
         <div class="settings-group">
-          <label>Ad Account ID</label>
-          <input type="text" id="adAccountId" placeholder="act_123456789">
+          <label>Ad Account ID:</label>
+          <input type="text" id="adAccountId" placeholder="ป้อน Ad Account ID">
         </div>
 
         <div class="settings-group">
-          <label>Lock UNIT (เลือก UNIT ที่ต้องการล็อค)</label>
+          <label>ล็อก UNIT:</label>
           <select id="lockedUnit">
-            <option value="">ไม่ล็อค - แสดงทั้งหมด</option>
+            <option value="">ไม่ล็อก</option>
+            <option value="UNIT A">UNIT A</option>
+            <option value="UNIT B">UNIT B</option>
+            <option value="UNIT C">UNIT C</option>
           </select>
-          <small>หากเลือก UNIT จะแสดงเฉพาะ UNIT นี้เท่านั้น</small>
         </div>
 
         <div class="settings-group">
-          <label>ชื่อเพจ (Page Names)</label>
-          <textarea id="pageNames" placeholder="ระบุชื่อเพจแต่ละเพจเว้นด้วยบรรทัดใหม่&#10;เช่น:&#10;เพจ 1&#10;เพจ 2&#10;เพจ 3"></textarea>
+          <label>ชื่อเพจ:</label>
+          <textarea id="pageNames" placeholder="UNIT A: เพจหลัก&#10;UNIT B: เพจรอง"></textarea>
         </div>
 
-        <div class="settings-footer">
-          <button onclick="saveSettings()" class="btn-save">💾 บันทึกการตั้งค่า</button>
-          <button onclick="closeSettings()" class="btn-cancel">ยกเลิก</button>
-        </div>
-
-        <div id="settingsMessage" class="settings-message"></div>
+        <button id="saveSettingsBtn" class="btn-save">💾 บันทึก</button>
       </div>
+    </div>
+  </div>
+
+  <div id="imageModal" class="modal hidden">
+    <div class="modal-content">
+      <button id="closeModal" class="modal-close">✕</button>
+      <img id="modalImage" src="" alt="Media">
     </div>
   </div>
 

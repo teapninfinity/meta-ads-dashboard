@@ -2,7 +2,7 @@
   "name": "meta-ads-dashboard",
   "version": "1.0.0",
   "description": "Meta Ads Report Dashboard",
-  "main": "backend/server.js",
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
@@ -12,8 +12,7 @@
     "dotenv": "^16.3.1"
   },
   "engines": {
-    "node": "18.x",
-    "npm": "9.x"
+    "node": "18.x"
   },
   "keywords": ["meta", "ads", "dashboard"],
   "author": "PNInfinity",
