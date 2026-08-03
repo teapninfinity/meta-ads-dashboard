@@ -4,6 +4,7 @@
   "description": "Meta Ads Report Dashboard",
   "main": "backend/server.js",
   "scripts": {
+    "postinstall": "npm install",
     "start": "node server.js"
   },
   "dependencies": {
