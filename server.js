@@ -146,10 +146,21 @@ app.get('/api/health', (req, res) => {
 
 // Catch-all: serve index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, './frontend/index.html'));
+  const indexPath = path.join(__dirname, './frontend/index.html');
+  console.log(`📄 Serving index.html from: ${indexPath}`);
+  res.sendFile(indexPath, (err) => {
+    if (err) {
+      console.error(`❌ Error sending file: ${err.message}`);
+      res.status(500).send('Error: index.html not found');
+    }
+  });
 });
 
 app.listen(PORT, () => {
   console.log(`\n🚀 Server running at http://localhost:${PORT}`);
   console.log(`📊 Dashboard: http://localhost:${PORT}\n`);
+});
+
+process.on('uncaughtException', (err) => {
+  console.error('❌ Uncaught Exception:', err);
 });
