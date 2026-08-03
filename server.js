@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from frontend
-app.use(express.static(path.join(__dirname, '../frontend')));
+app.use(express.static(path.join(__dirname, './frontend')));
 
 // Debug logging
 app.use((req, res, next) => {
@@ -18,7 +18,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Sample data - replace with actual Meta Ads API integration
+// Sample data
 const sampleData = {
   units: ['UNIT A', 'UNIT B', 'UNIT C'],
   pages: ['เพจ 1', 'เพจ 2', 'เพจ 3'],
@@ -110,7 +110,6 @@ const sampleData = {
 app.get('/api/dashboard', (req, res) => {
   const { startDate, endDate, unit, page } = req.query;
 
-  // Filter logic
   let filtered = sampleData.rows;
 
   if (unit && unit !== 'ALL') {
@@ -121,11 +120,6 @@ app.get('/api/dashboard', (req, res) => {
     filtered = filtered.filter(row => row.page === page);
   }
 
-  // Date filtering can be added here if needed
-  if (startDate && endDate) {
-    // Add date filtering logic
-  }
-
   res.json({
     rows: filtered,
     units: sampleData.units,
@@ -133,22 +127,8 @@ app.get('/api/dashboard', (req, res) => {
   });
 });
 
-// API endpoint: Refresh data (from Meta Ads API)
-app.post('/api/refresh', async (req, res) => {
-  const { startDate, endDate, unit, page } = req.body;
-  const { metaToken, adAccountId } = req.body;
-
-  // TODO: Integrate with Meta Ads API here
-  // This would make calls to Facebook Ads API to fetch fresh data
-  // For now, returning sample response
-
-  if (!metaToken || !adAccountId) {
-    return res.status(400).json({
-      success: false,
-      message: 'ต้องระบุ Meta Token และ Ad Account ID'
-    });
-  }
-
+// API endpoint: Refresh data
+app.post('/api/refresh', (req, res) => {
   const updatedAt = new Date().toLocaleString('th-TH');
 
   res.json({
@@ -164,9 +144,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-// Catch-all: serve index.html for client-side routing
+// Catch-all: serve index.html
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/index.html'));
+  res.sendFile(path.join(__dirname, './frontend/index.html'));
 });
 
 app.listen(PORT, () => {
