@@ -1,0 +1,12 @@
+[build]
+builder = "nixpacks"
+
+[build.nixpacks]
+providers = ["nodejs-pnpm"]
+
+[deploy]
+numReplicas = 1
+startCommand = "cd backend && npm install && npm start"
+healthcheckPath = "/"
+healthcheckInterval = 10
+healthcheckTimeout = 5
